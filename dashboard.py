@@ -259,10 +259,37 @@ if pagina == "Classificação Probabilística":
     # BAYES
     # =====================
 
-    p_survive = (
-        df[df['Survived'] == 1].shape[0]
-        / df.shape[0]
+# ====================================
+# BAYES COMPLETO
+# ====================================
+
+    df_bayes = df.copy()
+
+    # Criando faixas de idade
+    df_bayes["FaixaIdade"] = pd.cut(
+        df_bayes["Age"],
+        bins=[0, 12, 18, 35, 60, 100],
+        labels=[
+            "Crianca",
+            "Adolescente",
+            "Adulto",
+            "Meia_Idade",
+            "Idoso"
+        ]
     )
+
+    # Determinar faixa escolhida
+
+    if idade <= 12:
+        faixa = "Crianca"
+    elif idade <= 18:
+        faixa = "Adolescente"
+    elif idade <= 35:
+        faixa = "Adulto"
+    elif idade <= 60:
+        faixa = "Meia_Idade"
+    else:
+        faixa = "Idoso"
 
     sexo_texto = (
         "female"
@@ -270,27 +297,121 @@ if pagina == "Classificação Probabilística":
         else "male"
     )
 
-    p_sexo_given_survive = (
+    # Priori
+
+    p_survive = (
+        len(df_bayes[df_bayes["Survived"] == 1])
+        /
+        len(df_bayes)
+    )
+
+    p_not_survive = (
+        len(df_bayes[df_bayes["Survived"] == 0])
+        /
+        len(df_bayes)
+    )
+
+    # Verossimilhanças
+
+    p_sexo_survive = (
         len(
-            df[
-                (df['Sex'] == sexo_texto) &
-                (df['Survived'] == 1)
+            df_bayes[
+                (df_bayes["Sex"] == sexo_texto)
+                &
+                (df_bayes["Survived"] == 1)
             ]
         )
         /
-        len(df[df['Survived'] == 1])
+        len(df_bayes[df_bayes["Survived"] == 1])
     )
 
-    p_sexo = (
-        len(df[df['Sex'] == sexo_texto])
+    p_classe_survive = (
+        len(
+            df_bayes[
+                (df_bayes["Pclass"] == classe)
+                &
+                (df_bayes["Survived"] == 1)
+            ]
+        )
         /
-        len(df)
+        len(df_bayes[df_bayes["Survived"] == 1])
     )
 
-    bayes = (
-        p_sexo_given_survive
-        * p_survive
-    ) / p_sexo
+    p_faixa_survive = (
+        len(
+            df_bayes[
+                (df_bayes["FaixaIdade"] == faixa)
+                &
+                (df_bayes["Survived"] == 1)
+            ]
+        )
+        /
+        len(df_bayes[df_bayes["Survived"] == 1])
+    )
+
+    # Não sobreviveu
+
+    p_sexo_not = (
+        len(
+            df_bayes[
+                (df_bayes["Sex"] == sexo_texto)
+                &
+                (df_bayes["Survived"] == 0)
+            ]
+        )
+        /
+        len(df_bayes[df_bayes["Survived"] == 0])
+    )
+
+    p_classe_not = (
+        len(
+            df_bayes[
+                (df_bayes["Pclass"] == classe)
+                &
+                (df_bayes["Survived"] == 0)
+            ]
+        )
+        /
+        len(df_bayes[df_bayes["Survived"] == 0])
+    )
+
+    p_faixa_not = (
+        len(
+            df_bayes[
+                (df_bayes["FaixaIdade"] == faixa)
+                &
+                (df_bayes["Survived"] == 0)
+            ]
+        )
+        /
+        len(df_bayes[df_bayes["Survived"] == 0])
+    )
+
+    # Naive Bayes
+
+    score_survive = (
+        p_survive
+        * p_sexo_survive
+        * p_classe_survive
+        * p_faixa_survive
+    )
+
+    score_not = (
+        p_not_survive
+        * p_sexo_not
+        * p_classe_not
+        * p_faixa_not
+    )
+
+    total = score_survive + score_not
+
+    prob_survive = (
+        score_survive / total
+    ) * 100
+
+    prob_not = (
+        score_not / total
+    ) * 100
 
     pred_arvore = arvore.predict(entrada)[0]
     pred_floresta = floresta.predict(entrada)[0]
@@ -301,7 +422,7 @@ if pagina == "Classificação Probabilística":
 
     col1.metric(
         "Bayes",
-        f"{bayes*100:.2f}%"
+        f"{prob_survive:.2f}%"
     )
 
     col2.metric(
@@ -317,6 +438,33 @@ if pagina == "Classificação Probabilística":
         if pred_floresta == 1
         else "Não Sobreviveu"
     )
+
+    # ==========================
+    # GRÁFICO DO BAYES
+    # ==========================
+
+    st.divider()
+
+    st.subheader("Probabilidades Bayesianas")
+
+    grafico = pd.DataFrame({
+        "Classe": [
+            "Sobreviveu",
+            "Não Sobreviveu"
+        ],
+        "Probabilidade": [
+            prob_survive,
+            prob_not
+        ]
+    })
+
+    st.bar_chart(
+        grafico.set_index("Classe")
+    )
+
+    # ==========================
+    # ACURÁCIA
+    # ==========================
 
     st.divider()
 
