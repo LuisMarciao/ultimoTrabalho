@@ -1,10 +1,8 @@
 # RELATÓRIO TÉCNICO – PROJETO DE ESTATÍSTICA E PROBABILIDADE
 
-## 1. Integrantes
+## 1. Integrante
 
-* Nome do Aluno 1
-* Nome do Aluno 2
-* Nome do Aluno 3
+* Luis Arthur Vasconcellos Marciao
 
 ---
 
