@@ -236,19 +236,17 @@ Os modelos foram avaliados utilizando:
 
 ### Árvore de Decisão
 
-* Accuracy: ______
-* Precision: ______
-* Recall: ______
-* F1-Score: ______
+* Accuracy: 0.7741935483870968
+* Precision: 0.7272727272727273
+* Recall: 0.6666666666666666
+* F1-Score: 0.6956521739130435
 
 ### Random Forest
 
-* Accuracy: ______
-* Precision: ______
-* Recall: ______
-* F1-Score: ______
-
-Os valores acima devem ser preenchidos com os resultados obtidos durante a execução do notebook.
+* Accuracy: 0.7612903225806451
+* Precision: 0.7169811320754716
+* Recall: 0.6333333333333333
+* F1-Score: 0.672566371681416
 
 ---
 
