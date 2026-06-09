@@ -11,13 +11,9 @@ from sklearn.metrics import accuracy_score
 
 st.set_page_config(
     page_title="Projeto Titanic",
-    page_icon="🚢",
     layout="wide"
 )
 
-# ==========================
-# CARREGAMENTO DOS DADOS
-# ==========================
 
 @st.cache_data
 def carregar_dados():
@@ -47,9 +43,6 @@ def carregar_dados():
 
 df = carregar_dados()
 
-# ==========================
-# SIDEBAR
-# ==========================
 
 pagina = st.sidebar.radio(
     "Navegação",
@@ -59,13 +52,10 @@ pagina = st.sidebar.radio(
     ]
 )
 
-# ==========================
-# EDA
-# ==========================
 
 if pagina == "Análise dos Dados":
 
-    st.title("🚢 Dashboard Titanic")
+    st.title("Dashboard Titanic")
 
     st.header("Informações Gerais")
 
@@ -144,13 +134,10 @@ if pagina == "Análise dos Dados":
 
     st.pyplot(fig)
 
-# ==========================
-# CLASSIFICAÇÃO
-# ==========================
 
 if pagina == "Classificação Probabilística":
 
-    st.title("🎯 Classificação Probabilística")
+    st.title("Classificação Probabilística")
 
     df_ml = df.copy()
 
@@ -255,13 +242,6 @@ if pagina == "Classificação Probabilística":
         'Embarked': porto_num
     }])
 
-    # =====================
-    # BAYES
-    # =====================
-
-# ====================================
-# BAYES COMPLETO
-# ====================================
 
     df_bayes = df.copy()
 
@@ -439,9 +419,6 @@ if pagina == "Classificação Probabilística":
         else "Não Sobreviveu"
     )
 
-    # ==========================
-    # GRÁFICO DO BAYES
-    # ==========================
 
     st.divider()
 
@@ -462,9 +439,6 @@ if pagina == "Classificação Probabilística":
         grafico.set_index("Classe")
     )
 
-    # ==========================
-    # ACURÁCIA
-    # ==========================
 
     st.divider()
 
